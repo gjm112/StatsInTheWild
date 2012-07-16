@@ -23,7 +23,7 @@ ind.vec[i]<-gregexpr(paste("/olympics/athletes/",letters,sep=""),webpage[i])[[1]
 }
 text.raw<-webpage[ind.vec>0]
 
-
+#correct for non-english letters
 if (length(text.raw)>0){
 
 names<-vector()
@@ -245,11 +245,11 @@ dat.summer<-dat.uniq[unlist(gregexpr("Summer",dat.uniq$Games))>0,]
 dat.summer$Age<-as.numeric(as.character(dat.summer$Age))
 
 #Remove some sports
-dat.summer<-dat.summer[dat.summer$Sport!="Motorboating",]
-dat.summer<-dat.summer[dat.summer$Sport!="Art Competitions",]
-dat.summer<-dat.summer[dat.summer$Sport!="Croquet",]
-dat.summer<-dat.summer[dat.summer$Sport!="Cricket",]
-dat.summer<-dat.summer[dat.summer$Sport!="Ice Hockey",]
+#dat.summer<-dat.summer[dat.summer$Sport!="Motorboating",]
+#dat.summer<-dat.summer[dat.summer$Sport!="Art Competitions",]
+#dat.summer<-dat.summer[dat.summer$Sport!="Croquet",]
+#dat.summer<-dat.summer[dat.summer$Sport!="Cricket",]
+#dat.summer<-dat.summer[dat.summer$Sport!="Ice Hockey",]
 
 dat.summer$SportSex<-paste(as.character(dat.summer$Sport),as.character(dat.summer$Sex),sep=", ")
 
@@ -291,13 +291,6 @@ legend(0,60,c("Asia","Australia","Europe", "N. America"),col=c("lightgreen","gol
 par(oma=c(2,1,1,1))
 boxplot(dat.summer$Age~dat.summer$Sex,col=c("green","pink","blue"),las=2,main="Age distribution of Olympic Athletes by Year: All-time" ,ylab="Age",xlab="Gender")
 abline(h=seq(10,100,5),lty=3,col="gray75")
-
-
-
-
-
-##Pull out just athletics
-#dat.summer<-dat.uniq[unlist(gregexpr("Summer",dat.uniq$Games))>0,]
 
 
 
