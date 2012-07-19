@@ -4,14 +4,10 @@ library(scrapeR)
 #readHTMLTable(url)
 
 #results.list<-list()
-alphabet<-c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
-
-for (i.one in 1:26){
-		for (i.two in 1:26){
-letters<-paste(alphabet[i.one],alphabet[i.two],sep="")
+letter.pairs <- c( outer( letters[1:26], letters[1:26], FUN=paste, sep="") )
 
 #letters<-'aa'
-url<-paste("http://www.sports-reference.com/olympics/athletes/",letters,"/",sep="")
+url<-paste("http://www.sports-reference.com/olympics/athletes/",letter.pairs,"/",sep="")
 
 #getting all the names
 
@@ -118,7 +114,7 @@ names[i]<-gsub("ů","u",names[i])
 
 }
 
-	print(letters)
+	print(letter.pairs)
 	tab<-data.frame(table(names))
 names(tab)<-c("Name","Cnt")
 tab$Name<-as.character(tab$Name)
@@ -127,10 +123,10 @@ N<-tab$Cnt[i]
 print(N)
 #get ages
 		for (q in 1:N){print(tab$Name[i])
-url2<-paste("http://www.sports-reference.com/olympics/athletes/",letters,"/",tab$Name[i],"-",q,".html",sep="")
+url2<-paste("http://www.sports-reference.com/olympics/athletes/",letter.pairs,"/",tab$Name[i],"-",q,".html",sep="")
 #if (names[i]=="batchuluuny-bat–orgil") {url2<-"http://www.sports-reference.com/olympics/athletes/ba/batchuluuny-bat-orgil-1.html"}
 temp<-try(readHTMLTable(url2)$results)
-if (class(temp)!="try-error"){results.list[[letters]][[paste(tab$Name[i],q,sep="")]]<-temp}
+if (class(temp)!="try-error"){results.list[[letter.pairs]][[paste(tab$Name[i],q,sep="")]]<-temp}
 }
 
 			}
