@@ -4,14 +4,10 @@ library(scrapeR)
 #readHTMLTable(url)
 
 #results.list<-list()
-alphabet<-c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
-
-for (i.one in 1:26){
-		for (i.two in 1:26){
-letters<-paste(alphabet[i.one],alphabet[i.two],sep="")
+letter.pairs <- c( outer( letters[1:26], letters[1:26], FUN=paste, sep="") )
 
 #letters<-'aa'
-url<-paste("http://www.sports-reference.com/olympics/athletes/",letters,"/",sep="")
+url<-paste("http://www.sports-reference.com/olympics/athletes/",letter.pairs,"/",sep="")
 
 #getting all the names
 
