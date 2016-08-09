@@ -1,5 +1,5 @@
 library(RCurl)
-
+date<-"20160809"
 repPrice<-demPrice<-list()
 
 #Vector of all states
@@ -18,25 +18,27 @@ for (st in stateAbbr){print(st)
       temp<-strsplit(x,",")[[1]]
       test<-read.csv(textConnection(temp),sep=":",header=FALSE)
       names(test)<-c("var","value")
-      if (as.character(test[14,"value"])=="Democratic"){
-      demPrice[[st]]<-as.numeric(gsub("}","",as.character(test[22,"value"])))
-      repPrice[[st]]<-as.numeric(gsub("}]","",as.character(test[37,"value"])))
-      }
-      if (as.character(test[14,"value"])=="Republican"){
-        demPrice[[st]]<-as.numeric(gsub("}]","",as.character(test[37,"value"])))
-        repPrice[[st]]<-as.numeric(gsub("}","",as.character(test[22,"value"])))
-      }
+      repID<-which(as.character(test[,2])==paste0("GOP.",st,".USPREZ16"))+2
+      demID<-which(as.character(test[,2])==paste0("DEM.",st,".USPREZ16"))+2
+      
+      demPrice[[st]]<-as.numeric(gsub("}","",as.character(test[demID,"value"])))
+      repPrice[[st]]<-as.numeric(gsub("}]","",as.character(test[repID,"value"])))
+      
+      #if (as.character(test[14,"value"])=="Republican"){
+      #  demPrice[[st]]<-as.numeric(gsub("}]","",as.character(test[37,"value"])))
+      #  repPrice[[st]]<-as.numeric(gsub("}","",as.character(test[22,"value"])))
+      #}
       }
 }
 
-
+unlist(demPrice)
 
 #When there is no marker available set a state to 0 or 1 based on last election.  
-for (st in c("AK" ,"AR", "ID", "KS" , "MS" ,"MT" ,"NE" , "ND", "OK" , "SD",  "WV", "WY")){
+for (st in c("AK" , "ID"  ,"MT" ,"NE" , "ND" , "SD",  "WV", "WY")){
   demPrice[[st]]<-0;repPrice[[st]]<-1
 }
 
-for (st in c( "CT", "DE" ,"HI" ,"ME", "NM", "OR" ,"RI", "VT")){
+for (st in c( "DE" ,"HI" ,"ME" ,"RI", "VT")){
   demPrice[[st]]<-1;repPrice[[st]]<-0
 }
 
@@ -62,8 +64,8 @@ blueN<-sum(as.numeric(names(table(unlist(EVsimList))))>270)
 
 
 #Make the plot 
-png("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictItPresident_20160730.png",h=10,w=10,res=300,units="in")
-plot(table(unlist(EVsimList)),xlim=c(150,425),col=c(rep("red",redN),"black",rep("blue",blueN)),yaxt='n',ylab="Probability",xlab="Electoral Votes",main="Electoral Vote Projections Based \n on Predictit.org State Markets \n July 30, 2016",sub="@statsinthewild")
+png("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictItPresident_20160809.png",h=10,w=10,res=300,units="in")
+plot(table(unlist(EVsimList)),xlim=c(150,440),ylim=c(0,0.015*100000),col=c(rep("red",redN),"black",rep("blue",blueN)),yaxt='n',ylab="Probability",xlab="Electoral Votes",main="Electoral Vote Projections Based \n on Predictit.org State Markets \n August 9, 2016",sub="@statsinthewild")
 #abline(v=270,lwd=1,col=rgb(0,0,0,0.1))
 polygon(c(270,500,500,270),c(0,0,4000,4000),col=rgb(0,0,1,0.5))
 polygon(c(0,270,270,0),c(0,0,4000,4000),col=rgb(1,0,0,0.5))
@@ -72,6 +74,8 @@ text(388,1250,paste0(100*sum(unlist(EVsimList)>=270)/nsim,"%"),cex=3)
 text(188,1250,paste0(100*sum(unlist(EVsimList)<=268)/nsim,"%"),cex=3)
 text(270,1250,paste0(100*sum(unlist(EVsimList)==269)/nsim,"%"),cex=3)
 dev.off()
+
+save.image(paste0("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictIt_",date,".RData"))
 
 #Dem win prob
 sum(unlist(EVsimList)>=270)/nsim
@@ -107,7 +111,7 @@ stListRep<-list()
 for (st in c("OH","PA","FL","TX","GA","TN","IN","MO","AZ","NC","SC","KY","AL","LA","CA","UT","MI","NY","VA","NV","WI","IA","CO","MN","NJ","NH","IL","WA","MA","MD")){print(st)
   tempPrice <- dat$repPrice
   tempPrice[rownames(dat)==st]<-1
-  nsim<-10000
+  nsim<-50000
   EVsimList<-list()
   for (i in 1:nsim){
     sim<-rbinom(50,1,tempPrice)
@@ -123,6 +127,43 @@ repState<-repState[order(-repState[,1]),]
 library(R2HTML)
 print(xtable(repState), type = "html")
 print(xtable(demState), type = "html")
+
+#Given a win in a state for Republican
+stListRep<-list()
+#Given a win in a state
+  tempPrice <- dat$repPrice
+  tempPrice[rownames(dat)=="FL"]<-1
+  #tempPrice[rownames(dat)=="OH"]<-1
+  tempPrice[rownames(dat)=="PA"]<-1
+  nsim<-10000
+  EVsimList<-list()
+  for (i in 1:nsim){print(i)
+    sim<-rbinom(50,1,tempPrice)
+    EVsimList[[i]]<-sim%*%dat$EV
+  }
+  c(sum(unlist(EVsimList)>=270)/nsim,sum(unlist(EVsimList)==269)/nsim,sum(unlist(EVsimList)<=268)/nsim)
+
+
+repState<-do.call(rbind,stListRep)
+repState<-repState[order(-repState[,1]),]
+
+#Given a win in a state
+tempPrice <- dat$repPrice
+tempPrice[rownames(dat)=="FL"]<-1
+tempPrice[rownames(dat)=="OH"]<-1
+tempPrice[rownames(dat)=="PA"]<-1
+tempPrice[rownames(dat)=="NC"]<-1
+nsim<-10000
+EVsimList<-list()
+for (i in 1:nsim){print(i)
+  sim<-rbinom(50,1,tempPrice)
+  EVsimList[[i]]<-sim%*%dat$EV
+}
+c(sum(unlist(EVsimList)>=270)/nsim,sum(unlist(EVsimList)==269)/nsim,sum(unlist(EVsimList)<=268)/nsim)
+
+
+
+
 
 # #By state
 # simList<-list()
