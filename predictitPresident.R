@@ -1,5 +1,5 @@
 library(RCurl)
-date<-"20160809"
+date<-"20160824"
 repPrice<-demPrice<-list()
 
 #Vector of all states
@@ -34,11 +34,11 @@ for (st in stateAbbr){print(st)
 unlist(demPrice)
 
 #When there is no marker available set a state to 0 or 1 based on last election.  
-for (st in c("AK" , "ID"  ,"MT" ,"NE" , "ND" , "SD",  "WV", "WY")){
+for (st in c("AK"  , "ND" , "SD",  "WY")){
   demPrice[[st]]<-0;repPrice[[st]]<-1
 }
 
-for (st in c( "DE" ,"HI" ,"ME" ,"RI", "VT")){
+for (st in c( "VT")){
   demPrice[[st]]<-1;repPrice[[st]]<-0
 }
 
@@ -64,8 +64,8 @@ blueN<-sum(as.numeric(names(table(unlist(EVsimList))))>270)
 
 
 #Make the plot 
-png("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictItPresident_20160809.png",h=10,w=10,res=300,units="in")
-plot(table(unlist(EVsimList)),xlim=c(150,440),ylim=c(0,0.015*100000),col=c(rep("red",redN),"black",rep("blue",blueN)),yaxt='n',ylab="Probability",xlab="Electoral Votes",main="Electoral Vote Projections Based \n on Predictit.org State Markets \n August 9, 2016",sub="@statsinthewild")
+png("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictItPresident_20160824.png",h=10,w=10,res=300,units="in")
+plot(table(unlist(EVsimList)),xlim=c(150,440),ylim=c(0,0.015*100000),col=c(rep("red",redN),"black",rep("blue",blueN)),yaxt='n',ylab="Probability",xlab="Electoral Votes",main="Electoral Vote Projections Based \n on Predictit.org State Markets \n August 24, 2016",sub="@statsinthewild")
 #abline(v=270,lwd=1,col=rgb(0,0,0,0.1))
 polygon(c(270,500,500,270),c(0,0,4000,4000),col=rgb(0,0,1,0.5))
 polygon(c(0,270,270,0),c(0,0,4000,4000),col=rgb(1,0,0,0.5))
@@ -84,8 +84,32 @@ sum(unlist(EVsimList)==269)/nsim
 #rep win prob
 sum(unlist(EVsimList)<=268)/nsim
 
-#Most likely electoral vote outcomes
+
+#Over time
+date<-as.Date(c("2016-07-30","2016-08-01","2016-08-02","2016-08-08","2016-08-09","2016-08-10","2016-08-11","2016-08-12","2016-08-13","2016-08-14","2016-08-15","2016-08-16","2016-08-17","2016-08-18","2016-08-19","2016-08-20","2016-08-21","2016-08-22","2016-08-23","2016-08-24"))
+clinton<-c(.83155,.83680,0.87960,0.91747,0.95575,0.95986,0.95307 ,0.95335,0.96132,.95451,0.9562,0.96045,0.96349,0.96811,0.95772,0.94783,0.94794,0.93742,0.94502,0.94093)
+trump<-c(.16209,.15642,0.11489,0.07887,0.04211,0.03813,0.0486,0.0435,0.03681,0.04327,0.04153,0.03754,0.0346,0.03008,0.0416,0.04958,0.04929,0.05936,0.0525,0.05614)
+tie<-c(.00636,0.00678,0.00551,0.00366,0.00214,0.00201,0.00207,0.0023,0.00187,0.00222,0.00227,0.00201,0.00191,0.00181,0.00212,0.00259,0.00277,0.00322,0.00246,0.00293)
+
+
+png("/Users/gregorymatthews/Dropbox/StatsInTheWild/PredictItPresident_time.png",h=10,w=10,res=300,units="in")
+plot(date,clinton,ylim=c(0,1),col="white",ylab="Probability",main="Probability of Winning the Electoral College",sub="Based on state electoral college markets on predictit.org",xlab="Date")
+points(date,clinton,col="blue",pch=16,cex=3)
+points(date,clinton,col="blue",type='l',lwd=5)
+points(date,trump,col="red",pch=16,cex=3)
+points(date,trump,col="red",type='l',lwd=5)
+points(date,tie,col="black",pch=16)
+points(date,tie,col="black",type='l')
+abline(h=c(0:10)/5,lty=3,col=rgb(0.5,0.5,0.5,0.5))
+abline(v=c(17012)+c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30),lty=5,col=rgb(0.5,0.5,0.5,0.5))
+legend(17012,0.7,c("Clinton","Trump","Tie"),pch=16,col=c("blue","red","black"))
+dev.off()
+
+dev.off()#Most likely electoral vote outcomes
 sort(table(unlist(EVsimList)))
+
+table(cut(abs(unlist(EVsimList)-270)+270,c(0,279,299,319,339,359,379,399,1000)))/100000
+    
 
 
 stList<-list()
