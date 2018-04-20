@@ -5,7 +5,7 @@ devtools::install_github("openWAR", "beanumber",ref="v0.1")
 #devtools::install_github("beanumber/openWARData") 
 
 library(openWAR)
-data)MLBAM
+data(MLBAM2014)
 #Parititons RE24 to all players on a given play
 #ds <- makeWAR(MLBAM2014)
 #tabulated openWAR for a player.  
