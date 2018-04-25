@@ -1,0 +1,17 @@
+---
+title: "WAR2018"
+author: "Gregory J. Matthews, Ph.D."
+date: "4/25/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo = FALSE}
+load("/Users/gregorymatthews/Dropbox/war2018.RData")
+library(DT)
+datatable(war2018)
+```
