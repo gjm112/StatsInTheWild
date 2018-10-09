@@ -8,6 +8,20 @@ score <- degrom$Rslt %>% as.character() %>% substring(2,nchar(as.character(degro
 score <- t(apply(do.call(rbind,score),1,as.numeric))
 
 dat <- data.frame(mets = score[1:32,1], opp = score[1:32,2], ER = degrom$ER[1:32], IP = degrom$IP[1:32], result = substring(degrom$Rslt,1,1)[1:32])
+
+table(dat$mets)
+
+#"Bullpen" ERA
+9*sum(dat$opp - dat$ER)/sum(dat$IP_Bullpen)
+9*32
+sum(dat$IP)/(9*32)
+
+sum(dat$opp - dat$ER)
+sum(dat$ER)
+
+sum(dat$IP)
+sum(dat$IP_Bullpen)
+
 dat2 <- group_by(dat, mets, opp, result) %>% summarise(n = as.factor(n()))
 dat2$n<-as.factor(as.numeric(as.character(dat2$n)))
 
