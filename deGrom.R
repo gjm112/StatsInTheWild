@@ -1,3 +1,5 @@
+#Data is from here: 
+#https://www.baseball-reference.com/players/gl.fcgi?id=degroja01&t=p&year=2018
 degrom <- read.csv("/Users/gregorymatthews/Dropbox/StatsInTheWild/deGrom2018.csv")
 
 substring(as.character(degrom$Rslt),2,nchar(as.character(degrom$Rslt)))
