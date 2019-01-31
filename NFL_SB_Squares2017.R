@@ -1,13 +1,15 @@
 nfl<-read.csv("https://raw.githubusercontent.com/fivethirtyeight/nfl-elo-game/master/data/nfl_games.csv")
-
+library(ggplot2)
 # Color housekeeping
 library(RColorBrewer)
 rf <- colorRampPalette(rev(brewer.pal(11,'Spectral')))
-r <- rf(16)
+r <- rf(8)
 
+png("/Users/gregorymatthews/SuperBowlSquares2019.png", res = 300, units = "in", h = 6, w =6)
 p <- ggplot(nfl, aes(x=factor(score1%%10),y=factor(score2%%10)))
-h3 <- p + stat_bin2d()  + scale_fill_gradientn(colors=r)
+h3 <- p + stat_bin2d()  + scale_fill_gradientn(colors=r) + xlab("Home Score") + ylab("Away Score")
 h3
+dev.off()
 
 nfl$end1<-nfl$score1%%10
 nfl$end2<-nfl$score2%%10
